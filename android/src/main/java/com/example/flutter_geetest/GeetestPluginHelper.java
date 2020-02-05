@@ -29,6 +29,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -55,6 +58,7 @@ class GeetestPluginHelper {
 
     private String mApi2;
 
+    private String g_challenge;
     // return {"msg":"xxxx", data:{"xxx":"xxx"}};
     void launchGeetest(final String api1, String api2, String gt, String challenge, int success, final MethodChannel.Result result) {
         try {
@@ -143,6 +147,14 @@ class GeetestPluginHelper {
             @Override
             public void onApi1Result(String result) {
                 LogUtil.log("GT3BaseListener-->onApi1Result-->"+result);
+                try {
+                    if(result != null){
+                        JSONObject jsobj = new JSONObject(result);
+                        g_challenge = (String) jsobj.get("challenge");
+                    }
+
+                } catch (JSONException e) {
+                }
             }
 
             /**
@@ -180,7 +192,14 @@ class GeetestPluginHelper {
                     }).start();
                 } else {
                     gt3GeetestUtils.showSuccessDialog();
-                    resultCallback.success(successString(result));
+                    try {
+                        JSONObject jsobj = new JSONObject(result);
+                        jsobj.put("g_challenge", g_challenge);
+                        resultCallback.success(successString(jsobj.toString()));
+
+                    } catch (JSONException e) {
+
+                    }
                 }
             }
 
