@@ -226,6 +226,12 @@ class GeetestPluginHelper {
             @Override
             public void onClosed(int num) {
                 LogUtil.log("GT3BaseListener-->onClosed-->"+num);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        resultCallback.success(errorString("onClosed"));
+                    }
+                });
             }
 
             /**
